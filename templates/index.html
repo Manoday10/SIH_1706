@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat PDF</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Chat with PDF</h1>
+        <div class="row">
+            <!-- Left Column: Upload File and QnA -->
+            <div class="column">
+                <h2>Upload & Ask a Question</h2>
+
+                <!-- Form to upload PDF -->
+                <form id="uploadForm" enctype="multipart/form-data">
+                    <input type="file" name="pdf_file" id="pdf_file" accept=".pdf" onchange="showFileName()">
+                    <div id="fileName"></div> <!-- To display uploaded file name -->
+                    <button type="button" onclick="submitPdf()">Submit & Process</button>
+                </form>
+
+                <h2>Ask a Question</h2>
+                <input type="text" id="question" placeholder="Your question">
+                <button type="button" onclick="askQuestion()">Ask</button>
+
+                <!-- Section to display the response with a scrollbar -->
+                <h3>Response</h3>
+                <div id="response"></div>
+            </div>
+
+            <!-- Right Column: Summarize Function -->
+            <div class="column">
+                <h2>Summarize PDF</h2>
+                <button type="button" onclick="summarizePdf()">Summarize</button>
+
+                <!-- Spinner for loading indication -->
+                <div id="spinner" class="spinner"></div>
+                <div id="loadingText">Fetching details from the PDF...</div>
+
+                <!-- Section to display the summary with a scrollbar -->
+                <h3>Summary</h3>
+                <div id="summary"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
