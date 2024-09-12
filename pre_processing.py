@@ -1,8 +1,10 @@
 # pdf_processing.py
 import os
 from PyPDF2 import PdfReader
+from flask import Flask, request, render_template, jsonify
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
+from langchain_google_genai import ChatGoogleGenerativeAI
 import google.generativeai as genai
 from langchain.memory import ConversationBufferMemory
 from langchain.chains.question_answering import load_qa_chain
@@ -49,7 +51,7 @@ def get_conversational_chain():
     User query: {question}
     Answer:
     """
-    model = genai.ChatGoogleGenerativeAI(model="gemini-pro", temperature=0.5)
+    model = ChatGoogleGenerativeAI(model="gemini-pro", temperature=0.5)
     prompt = PromptTemplate(template=prompt_template, input_variables=["context", "question"])
     chain = load_qa_chain(model, chain_type="stuff", prompt=prompt)
     return chain
@@ -57,18 +59,34 @@ def get_conversational_chain():
 def summarize_data(pdf_path):
     """Summarize content from PDF."""
     text_data = get_pdf_text(pdf_path)
-    default_prompt = "Summarize and extract text (keyword information) from documents relevant to organizational needs."
-    model = genai.GenerativeModel("gemini-1.5-flash")
-    response_stream = model.generate_content(
-        [default_prompt, text_data],
-        generation_config=genai.types.GenerationConfig(temperature=0.7),
-        stream=True
-    )
-    summary_output = ""
-    for message in response_stream:
-        summary_output += message.text
-    response_stream.resolve()
-    return summary_output
+    summray_type = request.form.get('summary_type')
+    if summray_type == "brief":
+        default_prompt = "Summarize and extract text (keyword information) from documents relevant to organizational needs in brief in 5-6 lines mentioning about company name and core components of the pdf."
+        model = genai.GenerativeModel("gemini-1.5-flash")
+        response_stream = model.generate_content(
+            [default_prompt, text_data],
+            generation_config=genai.types.GenerationConfig(temperature=0.7),
+            stream=True
+        )
+        summary_output = ""
+        for message in response_stream:
+            summary_output += message.text
+        response_stream.resolve()
+        return summary_output
+    
+    else:
+        default_prompt = "Summarize and extract text (keyword information) from documents relevant to organizational needs."
+        model = genai.GenerativeModel("gemini-1.5-flash")
+        response_stream = model.generate_content(
+            [default_prompt, text_data],
+            generation_config=genai.types.GenerationConfig(temperature=0.7),
+            stream=True
+        )
+        summary_output = ""
+        for message in response_stream:
+            summary_output += message.text
+        response_stream.resolve()
+        return summary_output
 
 def user_input(user_question):
     """Handle user queries using a conversational chain."""
@@ -78,5 +96,33 @@ def user_input(user_question):
         chain = get_conversational_chain()
         response = chain({"input_documents": docs, "question": user_question}, return_only_outputs=True)
         return response["output_text"]
-    except Exception as e:
+    except Exception as e:  
         return f"Error: {str(e)}"
+    
+
+def fetch_org_info_from_genai(filepath):
+   
+    text_data = get_pdf_text(filepath)
+    
+    default_prompt = (
+        "Extract the organization name and relevant details from the following document. "
+        "Mention the core components of the organization discussed in the PDF."
+    )
+    
+    model = genai.GenerativeModel("gemini-1.5-flash")
+
+    response_stream = model.generate_content(
+        [default_prompt, text_data],
+        generation_config=genai.types.GenerationConfig(temperature=0.7),
+        stream=True
+    )
+    org_info_output = ""
+    for message in response_stream:
+        if hasattr(message, 'text'):
+            org_info_output += message.text
+        else:
+            raise ValueError("No valid text in the response part.")
+    
+    response_stream.resolve()
+
+    return org_info_output
