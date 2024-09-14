@@ -1,50 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Chat PDF</title>
-    <link rel="stylesheet" href="static/css/style.css">
-</head>
-<body>
+    <link rel="stylesheet" href="static/css/style.css" />
+  </head>
+  <body>
     <div class="container">
-        <div class="header">
-            <h1>Chat with PDF</h1>
-            <div id="alertMessage" class="alert-message"></div>
-            <button id="darkModeToggle" onclick="toggleDarkMode()">Dark Mode</button> 
+      <div class="header">
+        <h1 class="main-heading">Chat with PDF</h1>
+        <div id="alertMessage" class="alert-message"></div>
+      </div>
+      <div class="row">
+        <div class="column">
+          <h2>Upload & Ask a Question</h2>
+          <form id="uploadForm" enctype="multipart/form-data">
+            <input
+              type="file"
+              name="pdf_file"
+              id="pdf_file"
+              accept=".pdf"
+              onchange="showFileName()"
+            />
+            <div id="fileName"></div>
+            <button type="button" onclick="submitPdf()">
+              Submit & Process
+            </button>
+          </form>
+          <h2>Ask a Question</h2>
+          <input type="text" id="question" placeholder="Your question" />
+          <button type="button" onclick="askQuestion()">Ask</button>
+          <button id="audioInputBtn" type="button" onclick="startVoiceInput()">
+            🎙️Speak
+          </button>
+          <h3>Response</h3>
+          <div id="response" class="text-box"></div>
         </div>
-        <div class="row">
-          <div class="column">
-            <h2>Upload & Ask a Question</h2>
-            <form id="uploadForm" enctype="multipart/form-data">
-              <input type="file" name="pdf_file" id="pdf_file" accept=".pdf" onchange="showFileName()" />
-              <div id="fileName"></div>
-              <button type="button" onclick="submitPdf()">Submit & Process</button>
-            </form>
-            <h2>Ask a Question</h2>
-            <input type="text" id="question" placeholder="Your question" />
-            <button type="button" onclick="askQuestion()">Ask</button>
-            <h3>Response</h3>
-            <div id="response" class="text-box"></div>
-          </div>
-  
-          <div class="column">
-            <h2>Summarize the Document</h2>
-            <button type="button" onclick="summarizePdf('brief')">Brief Summary</button>
-            <button type="button" onclick="summarizePdf('long')">Long Summary</button>
+
+        <div class="column">
+          <h2>Summarize the Document</h2>
+          <button type="button" onclick="summarizePdf('brief')">
+            Brief Summary
+          </button>
+          <button type="button" onclick="summarizePdf('long')">
+            Long Summary
+          </button>
+          <div id="spinnerContainer" class="spinner-container">
             <div id="spinner" class="spinner"></div>
             <div id="loadingText">Fetching details from the PDF...</div>
-            <h3>Summary</h3>
-            <div id="summary" class="text-box"></div> 
           </div>
-
-          <div class="column">
-            <h2>About Organization</h2>
-            <button type="button" onclick="fetchOrgInfo()">Fetch Organization Info</button>
-            <div id="orgInfo" class="text-box"></div> 
-          </div>
+          <h3>Summary</h3>
+          <div id="summary" class="text-box"></div>
         </div>
+
+        <div class="column">
+          <h2>About Organization</h2>
+          <button type="button" onclick="fetchOrgInfo()">
+            Fetch Organization Info
+          </button>
+          <div id="orgInfo" class="text-box"></div>
+        </div>
+      </div>
     </div>
     <script src="static/js/script.js"></script>
-</body>
+  </body>
 </html>
