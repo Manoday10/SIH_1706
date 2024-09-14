@@ -1,6 +1,6 @@
 # app.py
 from flask import Flask, request, render_template, jsonify
-from pdf_processing import get_pdf_text, get_text_chunks, summarize_data, user_input, fetch_org_info_from_genai
+from pre_processing import get_pdf_text, get_text_chunks, summarize_data, user_input, fetch_org_info_from_genai
 import os
 from werkzeug.utils import secure_filename
 import os
